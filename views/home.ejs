@@ -1,0 +1,203 @@
+<%- include('partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, success: typeof success !== 'undefined' ? success : null, error: typeof error !== 'undefined' ? error : null }) %>
+
+<!-- Hero Section -->
+<section class="hero-section text-white py-5">
+  <div class="container py-4">
+    <div class="row align-items-center">
+      <div class="col-lg-7">
+        <h1 class="display-4 fw-bold mb-3">
+          Get Your Videos <span class="text-warning">Professionally Edited</span>
+        </h1>
+        <p class="lead mb-4">Connect with talented video editors. Post a job, get it edited, pay securely. Simple, fast, and professional.</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="/jobs/post" class="btn btn-warning btn-lg fw-bold px-4">
+            <i class="bi bi-plus-circle"></i> Post a Job
+          </a>
+          <a href="/jobs" class="btn btn-outline-light btn-lg px-4">
+            <i class="bi bi-search"></i> Browse Jobs
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-5 text-center d-none d-lg-block">
+        <div class="hero-icon">
+          <i class="bi bi-camera-video-fill" style="font-size: 10rem; opacity: 0.8;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="bg-dark text-white py-3">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-md-4 py-3">
+        <h2 class="fw-bold text-primary mb-0"><%= stats.totalJobs %>+</h2>
+        <p class="text-muted mb-0">Jobs Posted</p>
+      </div>
+      <div class="col-md-4 py-3">
+        <h2 class="fw-bold text-success mb-0"><%= stats.totalEditors %>+</h2>
+        <p class="text-muted mb-0">Expert Editors</p>
+      </div>
+      <div class="col-md-4 py-3">
+        <h2 class="fw-bold text-warning mb-0">$<%= parseFloat(stats.totalPaidOut || 0).toFixed(0) %></h2>
+        <p class="text-muted mb-0">Paid to Editors</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-2">How It Works</h2>
+    <p class="text-center text-muted mb-5">Three simple steps to get your video edited</p>
+    <div class="row g-4">
+      <div class="col-md-4 text-center">
+        <div class="step-card p-4 rounded-3 h-100">
+          <div class="step-number mb-3">1</div>
+          <div class="mb-3 text-primary" style="font-size: 3rem;"><i class="bi bi-cloud-upload-fill"></i></div>
+          <h4 class="fw-bold">Post a Job</h4>
+          <p class="text-muted">Describe what you need, set your budget, and upload your raw footage. Funds are held securely in escrow.</p>
+        </div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="step-card p-4 rounded-3 h-100">
+          <div class="step-number mb-3">2</div>
+          <div class="mb-3 text-success" style="font-size: 3rem;"><i class="bi bi-scissors"></i></div>
+          <h4 class="fw-bold">Edit &amp; Submit</h4>
+          <p class="text-muted">Professional editors claim your job, work their magic, and submit the edited video for your review.</p>
+        </div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="step-card p-4 rounded-3 h-100">
+          <div class="step-number mb-3">3</div>
+          <div class="mb-3 text-warning" style="font-size: 3rem;"><i class="bi bi-cash-coin"></i></div>
+          <h4 class="fw-bold">Get Paid</h4>
+          <p class="text-muted">Review the submission. Accept it to release payment, or request revisions. Editors get paid instantly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Jobs -->
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="fw-bold mb-1">Featured Jobs</h2>
+        <p class="text-muted mb-0">Fresh opportunities for skilled editors</p>
+      </div>
+      <a href="/jobs" class="btn btn-outline-primary">View All Jobs <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <% if (featuredJobs && featuredJobs.length > 0) { %>
+      <div class="row g-4">
+        <% featuredJobs.forEach(job => { %>
+          <div class="col-md-6 col-lg-4">
+            <div class="card job-card h-100 shadow-sm">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <span class="badge bg-primary"><%= job.category %></span>
+                  <span class="badge bg-success fs-6">$<%= parseFloat(job.budget).toFixed(2) %></span>
+                </div>
+                <h5 class="card-title fw-bold"><%= job.title %></h5>
+                <p class="card-text text-muted small"><%= job.description.substring(0, 100) %><%= job.description.length > 100 ? '...' : '' %></p>
+                <div class="d-flex align-items-center text-muted small mb-3">
+                  <i class="bi bi-person me-1"></i> <%= job.owner_name %>
+                  <% if (job.deadline) { %>
+                    <i class="bi bi-calendar ms-3 me-1"></i> <%= job.deadline %>
+                  <% } %>
+                </div>
+              </div>
+              <div class="card-footer bg-transparent">
+                <a href="/jobs/<%= job.id %>" class="btn btn-primary btn-sm w-100">View Details</a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="text-center py-5">
+        <i class="bi bi-briefcase text-muted" style="font-size: 4rem;"></i>
+        <p class="text-muted mt-3">No jobs available yet. <a href="/jobs/post">Post the first one!</a></p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-2">What Our Users Say</h2>
+    <p class="text-center text-muted mb-5">Trusted by creators and editors worldwide</p>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 p-3">
+          <div class="card-body">
+            <div class="text-warning mb-2">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+            <p class="card-text fst-italic">"Found an amazing editor within hours. The escrow system gave me peace of mind knowing my funds were secure."</p>
+            <div class="d-flex align-items-center mt-3">
+              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width:40px;height:40px;">S</div>
+              <div>
+                <div class="fw-bold small">Sarah M.</div>
+                <div class="text-muted small">YouTube Creator</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 p-3">
+          <div class="card-body">
+            <div class="text-warning mb-2">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            </div>
+            <p class="card-text fst-italic">"As a video editor, this platform has been a game changer. Consistent work and instant payments once my work is approved."</p>
+            <div class="d-flex align-items-center mt-3">
+              <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-2" style="width:40px;height:40px;">J</div>
+              <div>
+                <div class="fw-bold small">James K.</div>
+                <div class="text-muted small">Freelance Video Editor</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 p-3">
+          <div class="card-body">
+            <div class="text-warning mb-2">
+              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+            </div>
+            <p class="card-text fst-italic">"The quality of editors on this platform is outstanding. My wedding video came out absolutely perfect!"</p>
+            <div class="d-flex align-items-center mt-3">
+              <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center me-2" style="width:40px;height:40px;">A</div>
+              <div>
+                <div class="fw-bold small">Amanda R.</div>
+                <div class="text-muted small">Small Business Owner</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white text-center">
+  <div class="container">
+    <h2 class="fw-bold mb-3">Ready to Get Started?</h2>
+    <p class="lead mb-4">Join thousands of creators and editors on VideoMarket today.</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="/register" class="btn btn-warning btn-lg fw-bold px-5">Create Account</a>
+      <a href="/jobs" class="btn btn-outline-light btn-lg px-5">Browse Jobs</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

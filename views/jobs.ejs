@@ -1,0 +1,105 @@
+<%- include('partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, success: null, error: null }) %>
+
+<div class="container py-4">
+  <!-- Page Header -->
+  <div class="row align-items-center mb-4">
+    <div class="col">
+      <h2 class="fw-bold mb-1"><i class="bi bi-briefcase text-primary"></i> Browse Jobs</h2>
+      <p class="text-muted">Find video editing opportunities that match your skills</p>
+    </div>
+    <% if (typeof user !== 'undefined' && user && (user.role === 'owner' || user.role === 'both')) { %>
+      <div class="col-auto">
+        <a href="/jobs/post" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Post a Job</a>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Filters -->
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <form method="GET" action="/jobs" class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold">Category</label>
+          <select name="category" class="form-select form-select-sm">
+            <option value="">All Categories</option>
+            <% const categories = ['general', 'youtube', 'wedding', 'corporate', 'social-media', 'music-video', 'documentary', 'short-film']; %>
+            <% categories.forEach(cat => { %>
+              <option value="<%= cat %>" <%= (typeof filters !== 'undefined' && filters.category === cat) ? 'selected' : '' %>><%= cat.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small fw-semibold">Min Budget ($)</label>
+          <input type="number" name="minBudget" class="form-control form-control-sm" placeholder="0"
+            value="<%= (typeof filters !== 'undefined' && filters.minBudget) ? filters.minBudget : '' %>">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small fw-semibold">Max Budget ($)</label>
+          <input type="number" name="maxBudget" class="form-control form-control-sm" placeholder="Any"
+            value="<%= (typeof filters !== 'undefined' && filters.maxBudget) ? filters.maxBudget : '' %>">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small fw-semibold">Status</label>
+          <select name="status" class="form-select form-select-sm">
+            <option value="open" <%= (!filters || !filters.status || filters.status === 'open') ? 'selected' : '' %>>Open</option>
+            <option value="" <%= (filters && filters.status === '') ? 'selected' : '' %>>All</option>
+            <option value="in_progress" <%= (filters && filters.status === 'in_progress') ? 'selected' : '' %>>In Progress</option>
+            <option value="completed" <%= (filters && filters.status === 'completed') ? 'selected' : '' %>>Completed</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+          <button type="submit" class="btn btn-primary btn-sm flex-grow-1"><i class="bi bi-funnel"></i> Filter</button>
+          <a href="/jobs" class="btn btn-outline-secondary btn-sm">Reset</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <span class="text-muted small"><%= jobs.length %> job<%= jobs.length !== 1 ? 's' : '' %> found</span>
+  </div>
+
+  <% if (jobs && jobs.length > 0) { %>
+    <div class="row g-4">
+      <% jobs.forEach(job => { %>
+        <div class="col-md-6 col-lg-4">
+          <div class="card job-card h-100 shadow-sm border-0">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="badge bg-primary text-capitalize"><%= job.category %></span>
+                <% const statusColors = { open: 'success', in_progress: 'warning', completed: 'info', cancelled: 'secondary' }; %>
+                <span class="badge bg-<%= statusColors[job.status] || 'secondary' %>"><%= job.status.replace('_', ' ') %></span>
+              </div>
+              <h5 class="card-title fw-bold"><%= job.title %></h5>
+              <p class="card-text text-muted small"><%= job.description.substring(0, 120) %><%= job.description.length > 120 ? '...' : '' %></p>
+              <div class="budget-badge d-inline-block mb-3">
+                <i class="bi bi-cash-coin text-success"></i> <strong class="text-success">$<%= parseFloat(job.budget).toFixed(2) %></strong>
+              </div>
+              <div class="d-flex flex-wrap gap-2 text-muted small">
+                <span><i class="bi bi-person"></i> <%= job.owner_name %></span>
+                <% if (job.deadline) { %>
+                  <span><i class="bi bi-calendar3"></i> <%= job.deadline %></span>
+                <% } %>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+              <a href="/jobs/<%= job.id %>" class="btn btn-primary btn-sm w-100">
+                <i class="bi bi-eye"></i> View Details
+              </a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="text-center py-5">
+      <i class="bi bi-search text-muted" style="font-size: 4rem;"></i>
+      <h4 class="mt-3 text-muted">No Jobs Found</h4>
+      <p class="text-muted">Try adjusting your filters or check back later.</p>
+      <a href="/jobs" class="btn btn-outline-primary">Clear Filters</a>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

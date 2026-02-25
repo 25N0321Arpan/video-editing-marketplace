@@ -1,0 +1,253 @@
+<%- include('partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, success: typeof success !== 'undefined' ? success : null, error: typeof error !== 'undefined' ? error : null }) %>
+
+<div class="container py-4">
+  <div class="row">
+    <!-- Job Details -->
+    <div class="col-lg-8">
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/jobs">Jobs</a></li>
+          <li class="breadcrumb-item active"><%= job.title.substring(0, 30) %>...</li>
+        </ol>
+      </nav>
+
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <span class="badge bg-primary text-capitalize fs-6"><%= job.category %></span>
+            <% const statusColors = { open: 'success', in_progress: 'warning', completed: 'info', cancelled: 'secondary' }; %>
+            <span class="badge bg-<%= statusColors[job.status] || 'secondary' %> fs-6"><%= job.status.replace('_', ' ') %></span>
+          </div>
+          <h2 class="fw-bold mb-3"><%= job.title %></h2>
+          <div class="d-flex flex-wrap gap-3 text-muted small mb-4">
+            <span><i class="bi bi-person-circle"></i> Posted by <strong><%= job.owner_name %></strong></span>
+            <span><i class="bi bi-calendar3"></i> <%= new Date(job.created_at).toLocaleDateString() %></span>
+            <% if (job.deadline) { %>
+              <span class="text-danger"><i class="bi bi-clock"></i> Deadline: <%= job.deadline %></span>
+            <% } %>
+            <% if (job.editor_name) { %>
+              <span class="text-warning"><i class="bi bi-scissors"></i> Editor: <%= job.editor_name %></span>
+            <% } %>
+          </div>
+
+          <h5 class="fw-bold">Description</h5>
+          <p class="text-muted"><%= job.description %></p>
+
+          <h5 class="fw-bold mt-4">Instructions for Editor</h5>
+          <div class="bg-light p-3 rounded-3">
+            <p class="mb-0"><%= job.instructions %></p>
+          </div>
+
+          <% if (job.video_url) { %>
+            <div class="mt-4">
+              <h5 class="fw-bold">Source Video</h5>
+              <a href="<%= job.video_url %>" target="_blank" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-play-circle"></i> View Source Video
+              </a>
+            </div>
+          <% } %>
+          <% if (job.video_file) { %>
+            <div class="mt-4">
+              <h5 class="fw-bold">Source Video File</h5>
+              <a href="/uploads/<%= job.video_file %>" target="_blank" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-film"></i> Download Source File
+              </a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Submissions Section (Owner View) -->
+      <% if (typeof user !== 'undefined' && user && job.owner_id === user.id) { %>
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-header bg-transparent py-3">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-inbox text-primary"></i> Submissions (<%= submissions.length %>)</h5>
+          </div>
+          <div class="card-body p-0">
+            <% if (submissions && submissions.length > 0) { %>
+              <% submissions.forEach(sub => { %>
+                <div class="p-4 border-bottom">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <strong><%= sub.editor_name %></strong>
+                      <span class="text-muted small ms-2"><%= new Date(sub.created_at).toLocaleDateString() %></span>
+                    </div>
+                    <% const subColors = { pending: 'warning', accepted: 'success', rejected: 'danger' }; %>
+                    <span class="badge bg-<%= subColors[sub.status] || 'secondary' %>"><%= sub.status %></span>
+                  </div>
+                  <% if (sub.notes) { %>
+                    <p class="text-muted small mb-2"><%= sub.notes %></p>
+                  <% } %>
+                  <% if (sub.video_url) { %>
+                    <a href="<%= sub.video_url %>" target="_blank" class="btn btn-outline-info btn-sm me-2">
+                      <i class="bi bi-play-circle"></i> Watch Submission
+                    </a>
+                  <% } %>
+                  <% if (sub.video_file) { %>
+                    <a href="/uploads/<%= sub.video_file %>" target="_blank" class="btn btn-outline-info btn-sm me-2">
+                      <i class="bi bi-film"></i> Download Submission
+                    </a>
+                  <% } %>
+                  <% if (sub.status === 'pending' && job.status !== 'completed') { %>
+                    <div class="mt-2 d-flex gap-2 flex-wrap">
+                      <form method="POST" action="/jobs/<%= job.id %>/accept-submission/<%= sub.id %>" class="d-inline">
+                        <button type="submit" class="btn btn-success btn-sm"
+                          onclick="return confirm('Accept this submission and pay the editor $<%= (job.budget * 0.9).toFixed(2) %>?')">
+                          <i class="bi bi-check-lg"></i> Accept & Pay
+                        </button>
+                      </form>
+                      <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="collapse"
+                        data-bs-target="#reject-<%= sub.id %>">
+                        <i class="bi bi-x-lg"></i> Reject
+                      </button>
+                    </div>
+                    <div class="collapse mt-2" id="reject-<%= sub.id %>">
+                      <form method="POST" action="/jobs/<%= job.id %>/reject-submission/<%= sub.id %>">
+                        <div class="input-group input-group-sm">
+                          <input type="text" name="feedback" class="form-control" placeholder="Reason for rejection...">
+                          <button type="submit" class="btn btn-danger">Send Rejection</button>
+                        </div>
+                      </form>
+                    </div>
+                  <% } %>
+                  <% if (sub.feedback) { %>
+                    <div class="mt-2 small text-muted"><i class="bi bi-chat-text"></i> Feedback: <%= sub.feedback %></div>
+                  <% } %>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <div class="text-center py-4 text-muted">
+                <i class="bi bi-inbox" style="font-size: 2.5rem;"></i>
+                <p class="mt-2 mb-0">No submissions yet.</p>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Editor Submissions View -->
+      <% if (typeof user !== 'undefined' && user && job.editor_id === user.id) { %>
+        <% const mySubmissions = submissions.filter(s => s.editor_id === user.id); %>
+        <% if (mySubmissions.length > 0) { %>
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-transparent py-3">
+              <h5 class="mb-0 fw-bold"><i class="bi bi-send text-primary"></i> Your Submissions</h5>
+            </div>
+            <div class="card-body p-0">
+              <% mySubmissions.forEach(sub => { %>
+                <div class="p-4 border-bottom">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="text-muted small">Submitted: <%= new Date(sub.created_at).toLocaleDateString() %></span>
+                    <% const subColors2 = { pending: 'warning', accepted: 'success', rejected: 'danger' }; %>
+                    <span class="badge bg-<%= subColors2[sub.status] || 'secondary' %>"><%= sub.status %></span>
+                  </div>
+                  <% if (sub.notes) { %>
+                    <p class="text-muted small"><%= sub.notes %></p>
+                  <% } %>
+                  <% if (sub.feedback) { %>
+                    <div class="alert alert-info py-2 mb-0 small"><i class="bi bi-chat-text"></i> Owner feedback: <%= sub.feedback %></div>
+                  <% } %>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        <% } %>
+      <% } %>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Budget Card -->
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body text-center p-4">
+          <div class="text-muted small mb-1">Job Budget</div>
+          <h2 class="fw-bold text-success mb-0">$<%= parseFloat(job.budget).toFixed(2) %></h2>
+          <div class="text-muted small">Editor earns ~$<%= (job.budget * 0.9).toFixed(2) %> (after 10% commission)</div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <% if (typeof user !== 'undefined' && user) { %>
+        <% if (job.owner_id !== user.id) { %>
+          <!-- Editor Actions -->
+          <% if (job.status === 'open' && (user.role === 'editor' || user.role === 'both')) { %>
+            <div class="card shadow-sm border-0 mb-3">
+              <div class="card-body">
+                <h6 class="fw-bold mb-3">Interested in this job?</h6>
+                <form method="POST" action="/jobs/<%= job.id %>/claim">
+                  <button type="submit" class="btn btn-success w-100 fw-semibold"
+                    onclick="return confirm('Claim this job? You will be the assigned editor.')">
+                    <i class="bi bi-hand-index-thumb"></i> Claim This Job
+                  </button>
+                </form>
+                <p class="text-muted small mt-2 mb-0">By claiming, you agree to deliver quality work by the deadline.</p>
+              </div>
+            </div>
+          <% } %>
+
+          <!-- Submit Work Form -->
+          <% if (job.status === 'in_progress' && job.editor_id === user.id) { %>
+            <div class="card shadow-sm border-0 mb-3">
+              <div class="card-header bg-transparent py-3">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-upload text-primary"></i> Submit Your Work</h6>
+              </div>
+              <div class="card-body">
+                <form method="POST" action="/jobs/<%= job.id %>/submit" enctype="multipart/form-data">
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold">Video File</label>
+                    <input type="file" class="form-control form-control-sm" name="video_file" accept="video/*" id="videoUpload">
+                    <div class="form-text">MP4, MOV, AVI, MKV (max 500MB)</div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold">Or Video URL</label>
+                    <input type="url" class="form-control form-control-sm" name="video_url" placeholder="https://...">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold">Notes to Owner</label>
+                    <textarea class="form-control form-control-sm" name="notes" rows="3" placeholder="Describe what you did..."></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                    <i class="bi bi-cloud-upload"></i> Submit Edited Video
+                  </button>
+                </form>
+              </div>
+            </div>
+          <% } %>
+        <% } else { %>
+          <!-- Owner: Link to manage -->
+          <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body">
+              <p class="text-muted small mb-2">This is your job. Review submissions above.</p>
+              <a href="/dashboard" class="btn btn-outline-primary btn-sm w-100">Go to Dashboard</a>
+            </div>
+          </div>
+        <% } %>
+      <% } else { %>
+        <div class="card shadow-sm border-0 mb-3">
+          <div class="card-body text-center">
+            <p class="text-muted small">Sign in to claim this job</p>
+            <a href="/login" class="btn btn-primary w-100">Login to Apply</a>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Job Meta -->
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h6 class="fw-bold mb-3">Job Details</h6>
+          <ul class="list-unstyled small">
+            <li class="mb-2"><i class="bi bi-tag text-primary me-2"></i><strong>Category:</strong> <%= job.category %></li>
+            <li class="mb-2"><i class="bi bi-calendar text-primary me-2"></i><strong>Posted:</strong> <%= new Date(job.created_at).toLocaleDateString() %></li>
+            <% if (job.deadline) { %>
+              <li class="mb-2"><i class="bi bi-clock text-danger me-2"></i><strong>Deadline:</strong> <%= job.deadline %></li>
+            <% } %>
+            <li class="mb-2"><i class="bi bi-circle-fill text-<%= statusColors[job.status] || 'secondary' %> me-2" style="font-size:0.5rem;"></i><strong>Status:</strong> <%= job.status.replace('_', ' ') %></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
