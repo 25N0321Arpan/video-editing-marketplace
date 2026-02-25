@@ -3,11 +3,16 @@
   "version": "1.0.0",
   "description": "A marketplace for video editing services",
   "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node server.js",
     "seed": "node seed/seed.js"
   },
   "dependencies": {
+    "compression": "^1.7.4",
+    "helmet": "^7.1.0",
     "bcryptjs": "^2.4.3",
     "sql.js": "^1.10.3",
     "bootstrap": "^5.3.0",
