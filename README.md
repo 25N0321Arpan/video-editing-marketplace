@@ -90,6 +90,29 @@ The app will be running at `http://localhost:3000`
 - Editors earn **90%** of the job budget
 - Payments are instant upon acceptance
 
+## Deploying to Railway.app
+
+The repository includes a `railway.json` configuration for deployment on [Railway.app](https://railway.app) (free tier, $5 free credit/month).
+
+### Deploy to Railway
+
+1. Go to [railway.app](https://railway.app) and sign in with GitHub
+2. Click **"New Project"** → **"Deploy from GitHub Repo"**
+3. Select your `video-editing-marketplace` repository
+4. Railway will auto-detect Node.js and deploy
+5. Go to **Settings** → **Networking** → Click **"Generate Domain"**
+6. Your app will be live at the generated URL!
+
+### Environment Variables (set in Railway dashboard)
+
+| Variable | Value | Required |
+|----------|-------|----------|
+| `NODE_ENV` | `production` | Yes |
+| `JWT_SECRET` | (any random string) | Yes |
+| `PORT` | (auto-set by Railway) | No |
+
+---
+
 ## Deploying to Render.com
 
 The repository includes a `render.yaml` blueprint for one-click deployment on [Render.com](https://render.com) (free tier).
