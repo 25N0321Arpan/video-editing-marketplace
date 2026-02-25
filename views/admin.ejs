@@ -1,0 +1,125 @@
+<%- include('partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, success: typeof success !== 'undefined' ? success : null, error: typeof error !== 'undefined' ? error : null }) %>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1"><i class="bi bi-shield-fill text-warning"></i> Admin Dashboard</h2>
+      <p class="text-muted">Platform overview and management</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="/admin/users" class="btn btn-outline-primary btn-sm">All Users</a>
+      <a href="/admin/transactions" class="btn btn-outline-info btn-sm">All Transactions</a>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card card border-0 shadow-sm text-center p-3">
+        <div class="stat-icon bg-warning-subtle text-warning mx-auto mb-2"><i class="bi bi-cash-coin"></i></div>
+        <h3 class="fw-bold mb-0 text-success">$<%= parseFloat(stats.platformRevenue || 0).toFixed(2) %></h3>
+        <small class="text-muted">Platform Revenue</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card card border-0 shadow-sm text-center p-3">
+        <div class="stat-icon bg-primary-subtle text-primary mx-auto mb-2"><i class="bi bi-people-fill"></i></div>
+        <h3 class="fw-bold mb-0"><%= stats.totalUsers || 0 %></h3>
+        <small class="text-muted">Total Users</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card card border-0 shadow-sm text-center p-3">
+        <div class="stat-icon bg-success-subtle text-success mx-auto mb-2"><i class="bi bi-briefcase-fill"></i></div>
+        <h3 class="fw-bold mb-0"><%= stats.totalJobs || 0 %></h3>
+        <small class="text-muted">Total Jobs</small>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card card border-0 shadow-sm text-center p-3">
+        <div class="stat-icon bg-info-subtle text-info mx-auto mb-2"><i class="bi bi-check-circle-fill"></i></div>
+        <h3 class="fw-bold mb-0"><%= stats.completedJobs || 0 %></h3>
+        <small class="text-muted">Completed Jobs</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Recent Transactions -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-transparent py-3 d-flex justify-content-between">
+          <h5 class="mb-0 fw-bold"><i class="bi bi-receipt text-primary"></i> Recent Transactions</h5>
+          <a href="/admin/transactions" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="card-body p-0">
+          <% if (recentTransactions && recentTransactions.length > 0) { %>
+            <div class="table-responsive">
+              <table class="table table-hover mb-0 small">
+                <thead class="table-light">
+                  <tr>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% recentTransactions.forEach(t => { %>
+                    <tr>
+                      <td><%= t.user_name || 'N/A' %></td>
+                      <td>
+                        <% const txColors = { deposit: 'success', withdrawal: 'danger', earning: 'primary', escrow: 'warning', commission: 'info', payment: 'secondary', escrow_release: 'info' }; %>
+                        <span class="badge bg-<%= txColors[t.type] || 'secondary' %>"><%= t.type %></span>
+                      </td>
+                      <td class="fw-semibold <%= t.amount >= 0 ? 'text-success' : 'text-danger' %>">
+                        <%= t.amount >= 0 ? '+' : '' %>$<%= Math.abs(parseFloat(t.amount)).toFixed(2) %>
+                      </td>
+                      <td class="text-muted"><%= new Date(t.created_at).toLocaleDateString() %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <div class="text-center py-4 text-muted">No transactions yet.</div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div class="col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-transparent py-3 d-flex justify-content-between">
+          <h5 class="mb-0 fw-bold"><i class="bi bi-people text-success"></i> Users</h5>
+          <a href="/admin/users" class="btn btn-sm btn-outline-success">View All</a>
+        </div>
+        <div class="card-body p-0">
+          <% if (recentUsers && recentUsers.length > 0) { %>
+            <div class="list-group list-group-flush">
+              <% recentUsers.slice(0, 10).forEach(u => { %>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <div class="fw-semibold small"><%= u.name %></div>
+                      <div class="text-muted" style="font-size:0.75rem;"><%= u.email %></div>
+                    </div>
+                    <div class="text-end">
+                      <span class="badge bg-primary text-capitalize"><%= u.role %></span>
+                      <div class="text-success small">$<%= parseFloat(u.wallet_balance).toFixed(2) %></div>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <div class="text-center py-4 text-muted">No users yet.</div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

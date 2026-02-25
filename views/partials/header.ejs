@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | VideoMarket</title>
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/">
+        <i class="bi bi-camera-video-fill text-primary"></i> VideoMarket
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/"><i class="bi bi-house"></i> Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/jobs"><i class="bi bi-briefcase"></i> Browse Jobs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about"><i class="bi bi-info-circle"></i> About</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto align-items-center">
+          <% if (typeof user !== 'undefined' && user) { %>
+            <% if (user.role === 'admin') { %>
+              <li class="nav-item">
+                <a class="nav-link text-warning" href="/admin"><i class="bi bi-shield-fill"></i> Admin</a>
+              </li>
+            <% } %>
+            <li class="nav-item">
+              <a class="nav-link" href="/wallet">
+                <i class="bi bi-wallet2"></i>
+                <span class="badge bg-success">$<%= typeof user.wallet_balance !== 'undefined' ? parseFloat(user.wallet_balance).toFixed(2) : '0.00' %></span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/profile"><i class="bi bi-person-circle"></i> <%= user.name.split(' ')[0] %></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-danger" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+            </li>
+          <% } else { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/login"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-primary btn-sm ms-2" href="/register">Get Started</a>
+            </li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div style="padding-top: 70px;">
+    <% if (typeof success !== 'undefined' && success || (typeof req !== 'undefined' && req && req.query && req.query.success)) { %>
+      <div class="alert alert-success alert-dismissible fade show m-3 mb-0 auto-dismiss" role="alert">
+        <i class="bi bi-check-circle-fill"></i> <%= success || (req && req.query && req.query.success) %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error || (typeof req !== 'undefined' && req && req.query && req.query.error)) { %>
+      <div class="alert alert-danger alert-dismissible fade show m-3 mb-0 auto-dismiss" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i> <%= error || (req && req.query && req.query.error) %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% } %>
+  </div>

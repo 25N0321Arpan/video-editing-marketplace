@@ -1,0 +1,105 @@
+<%- include('partials/header', { title: title, user: typeof user !== 'undefined' ? user : null, success: null, error: null }) %>
+
+<!-- Hero -->
+<section class="bg-dark text-white py-5">
+  <div class="container py-3 text-center">
+    <h1 class="fw-bold display-5 mb-3">About VideoMarket</h1>
+    <p class="lead text-muted">The trusted platform connecting video creators with professional editors</p>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-5">
+  <div class="container" style="max-width: 860px;">
+    <h2 class="fw-bold mb-4 text-center">How VideoMarket Works</h2>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100 p-4">
+          <h5 class="fw-bold"><i class="bi bi-person-video3 text-primary me-2"></i>For Video Owners</h5>
+          <ol class="mt-3 ps-3">
+            <li class="mb-2"><strong>Create an account</strong> and add funds to your wallet.</li>
+            <li class="mb-2"><strong>Post your job</strong> with details, instructions, and budget. Funds are held securely in escrow.</li>
+            <li class="mb-2"><strong>Review submissions</strong> from professional editors at your own pace.</li>
+            <li class="mb-2"><strong>Accept a submission</strong> to release payment instantly to the editor.</li>
+            <li class="mb-0"><strong>Get your video</strong> professionally edited within your budget.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100 p-4">
+          <h5 class="fw-bold"><i class="bi bi-scissors text-success me-2"></i>For Video Editors</h5>
+          <ol class="mt-3 ps-3">
+            <li class="mb-2"><strong>Create an editor account</strong> and browse available jobs.</li>
+            <li class="mb-2"><strong>Claim a job</strong> that matches your skills and rate.</li>
+            <li class="mb-2"><strong>Download the source footage</strong> and edit according to instructions.</li>
+            <li class="mb-2"><strong>Submit your work</strong> by uploading the edited video or sharing a URL.</li>
+            <li class="mb-0"><strong>Get paid instantly</strong> when the owner accepts your submission.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Commission Structure -->
+<section class="py-5 bg-light">
+  <div class="container" style="max-width: 700px;">
+    <h2 class="fw-bold mb-4 text-center">Commission Structure</h2>
+    <div class="card border-0 shadow-sm p-4">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center mb-4 mb-md-0">
+          <div class="display-1 fw-bold text-primary">10%</div>
+          <p class="text-muted">Platform Commission</p>
+        </div>
+        <div class="col-md-6">
+          <h6 class="fw-bold mb-3">Here's how payment works:</h6>
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="bi bi-circle-fill text-primary me-2" style="font-size:0.5rem;"></i>Owner posts a $100 job</li>
+            <li class="mb-2"><i class="bi bi-circle-fill text-warning me-2" style="font-size:0.5rem;"></i>$100 goes into escrow immediately</li>
+            <li class="mb-2"><i class="bi bi-circle-fill text-success me-2" style="font-size:0.5rem;"></i>Editor earns <strong>$90</strong> on acceptance</li>
+            <li class="mb-0"><i class="bi bi-circle-fill text-info me-2" style="font-size:0.5rem;"></i>Platform keeps <strong>$10</strong> (10%)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <p class="text-muted text-center mt-3 small">Payments are processed instantly upon job acceptance. No hidden fees.</p>
+  </div>
+</section>
+
+<!-- Security & Trust -->
+<section class="py-5">
+  <div class="container" style="max-width: 860px;">
+    <h2 class="fw-bold mb-4 text-center">Why Trust VideoMarket?</h2>
+    <div class="row g-4">
+      <div class="col-md-4 text-center">
+        <div class="mb-3 text-primary" style="font-size: 3rem;"><i class="bi bi-shield-lock-fill"></i></div>
+        <h5 class="fw-bold">Secure Escrow</h5>
+        <p class="text-muted small">Funds are held securely until you approve the work. Never pay for unsatisfactory results.</p>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="mb-3 text-success" style="font-size: 3rem;"><i class="bi bi-lightning-charge-fill"></i></div>
+        <h5 class="fw-bold">Instant Payments</h5>
+        <p class="text-muted small">Editors receive payment instantly when their submission is accepted. No waiting periods.</p>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="mb-3 text-warning" style="font-size: 3rem;"><i class="bi bi-star-fill"></i></div>
+        <h5 class="fw-bold">Quality Work</h5>
+        <p class="text-muted small">Browse editor portfolios and choose the best fit for your project needs and budget.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 bg-primary text-white text-center">
+  <div class="container">
+    <h2 class="fw-bold mb-3">Ready to Get Started?</h2>
+    <p class="lead mb-4">Join VideoMarket and experience professional video editing made easy.</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="/register" class="btn btn-warning btn-lg fw-bold">Create Free Account</a>
+      <a href="/jobs" class="btn btn-outline-light btn-lg">Browse Jobs</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
