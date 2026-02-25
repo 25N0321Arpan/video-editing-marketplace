@@ -15,7 +15,7 @@
           <h6 class="mb-0 fw-bold"><i class="bi bi-plus-circle text-success"></i> Deposit Funds</h6>
         </div>
         <div class="card-body">
-          <form method="POST" action="/wallet/deposit">
+          <form method="POST" action="/dashboard/wallet/deposit">
             <div class="input-group">
               <span class="input-group-text">$</span>
               <input type="number" class="form-control" name="amount" min="1" step="0.01" placeholder="Amount" required>
@@ -36,7 +36,7 @@
           <h6 class="mb-0 fw-bold"><i class="bi bi-dash-circle text-danger"></i> Withdraw Funds</h6>
         </div>
         <div class="card-body">
-          <form method="POST" action="/wallet/withdraw">
+          <form method="POST" action="/dashboard/wallet/withdraw">
             <div class="input-group">
               <span class="input-group-text">$</span>
               <input type="number" class="form-control" name="amount" min="1" step="0.01"
@@ -88,7 +88,7 @@
           <% } else { %>
             <div class="text-center py-5 text-muted">
               <i class="bi bi-receipt" style="font-size: 3rem;"></i>
-              <p class="mt-3 mb-0">No transactions yet. <a href="/wallet/deposit">Add funds</a> to get started.</p>
+              <p class="mt-3 mb-0">No transactions yet. <a href="/dashboard/wallet">Add funds</a> to get started.</p>
             </div>
           <% } %>
         </div>

@@ -68,7 +68,7 @@ router.post('/wallet/deposit', requireAuth, (req, res) => {
   try {
     const amount = parseFloat(req.body.amount);
     if (isNaN(amount) || amount <= 0) {
-      return res.redirect('/wallet?error=Invalid deposit amount.');
+      return res.redirect('/dashboard/wallet?error=Invalid deposit amount.');
     }
     updateWallet(req.user.id, amount);
     createTransaction({
@@ -77,10 +77,10 @@ router.post('/wallet/deposit', requireAuth, (req, res) => {
       amount,
       description: `Wallet deposit of $${amount.toFixed(2)}`
     });
-    res.redirect('/wallet?success=Funds deposited successfully!');
+    res.redirect('/dashboard/wallet?success=Funds deposited successfully!');
   } catch (err) {
     console.error(err);
-    res.redirect('/wallet?error=An error occurred.');
+    res.redirect('/dashboard/wallet?error=An error occurred.');
   }
 });
 
@@ -90,10 +90,10 @@ router.post('/wallet/withdraw', requireAuth, (req, res) => {
     const amount = parseFloat(req.body.amount);
     const user = findUserById(req.user.id);
     if (isNaN(amount) || amount <= 0) {
-      return res.redirect('/wallet?error=Invalid withdrawal amount.');
+      return res.redirect('/dashboard/wallet?error=Invalid withdrawal amount.');
     }
     if (user.wallet_balance < amount) {
-      return res.redirect('/wallet?error=Insufficient balance.');
+      return res.redirect('/dashboard/wallet?error=Insufficient balance.');
     }
     updateWallet(req.user.id, -amount);
     createTransaction({
@@ -102,10 +102,10 @@ router.post('/wallet/withdraw', requireAuth, (req, res) => {
       amount: -amount,
       description: `Wallet withdrawal of $${amount.toFixed(2)}`
     });
-    res.redirect('/wallet?success=Withdrawal successful!');
+    res.redirect('/dashboard/wallet?success=Withdrawal successful!');
   } catch (err) {
     console.error(err);
-    res.redirect('/wallet?error=An error occurred.');
+    res.redirect('/dashboard/wallet?error=An error occurred.');
   }
 });
 

@@ -13,7 +13,7 @@
       <div>
         <strong>Wallet Balance: $<%= parseFloat(user.wallet_balance).toFixed(2) %></strong>
         <% if (user.wallet_balance <= 0) { %>
-          <span class="text-danger ms-2">— You need funds to post a job! <a href="/wallet" class="alert-link">Add funds</a></span>
+          <span class="text-danger ms-2">— You need funds to post a job! <a href="/dashboard/wallet" class="alert-link">Add funds</a></span>
         <% } else { %>
           <span class="text-muted ms-2">— This amount will be deducted as escrow when you post the job.</span>
         <% } %>
