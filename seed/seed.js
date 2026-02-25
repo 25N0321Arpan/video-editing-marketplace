@@ -11,7 +11,7 @@ const { updateSubmission } = require('../models/Submission');
 
 async function seed() {
   console.log('🌱 Initializing database...');
-  initDB();
+  await initDB();
 
   console.log('🧹 Clearing existing data...');
   db.exec('DELETE FROM transactions; DELETE FROM submissions; DELETE FROM jobs; DELETE FROM users;');

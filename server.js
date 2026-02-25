@@ -8,9 +8,6 @@ const { authenticate } = require('./middleware/auth');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Initialize database
-initDB();
-
 // View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -91,8 +88,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`VideoMarket server running on http://localhost:${PORT}`);
+// Initialize database then start server
+initDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`VideoMarket server running on http://localhost:${PORT}`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
 });
 
 module.exports = app;

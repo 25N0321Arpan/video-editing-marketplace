@@ -1,10 +1,65 @@
-const Database = require('better-sqlite3');
+const initSqlJs = require('sql.js');
+const fs = require('fs');
 const path = require('path');
 
-const db = new Database(path.join(__dirname, '../database.db'));
+const DB_PATH = path.join(__dirname, '../data/marketplace.db');
+const WASM_PATH = path.join(__dirname, '../node_modules/sql.js/dist/sql-wasm.wasm');
 
-function initDB() {
-  db.exec(`
+let sqlDb = null;
+
+function saveDb() {
+  const data = sqlDb.export();
+  const buffer = Buffer.from(data);
+  const dir = path.dirname(DB_PATH);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(DB_PATH, buffer);
+}
+
+const db = {
+  prepare(sql) {
+    return {
+      run(...params) {
+        sqlDb.run(sql, params);
+        saveDb();
+        return this;
+      },
+      get(...params) {
+        const stmt = sqlDb.prepare(sql);
+        stmt.bind(params);
+        const row = stmt.step() ? stmt.getAsObject() : undefined;
+        stmt.free();
+        return row;
+      },
+      all(...params) {
+        const stmt = sqlDb.prepare(sql);
+        stmt.bind(params);
+        const results = [];
+        while (stmt.step()) {
+          results.push(stmt.getAsObject());
+        }
+        stmt.free();
+        return results;
+      }
+    };
+  },
+  exec(sql) {
+    sqlDb.exec(sql);
+    saveDb();
+  }
+};
+
+async function initDB() {
+  const wasmBinary = fs.readFileSync(WASM_PATH);
+  const SQL = await initSqlJs({ wasmBinary });
+
+  if (fs.existsSync(DB_PATH)) {
+    const fileBuffer = fs.readFileSync(DB_PATH);
+    sqlDb = new SQL.Database(fileBuffer);
+  } else {
+    sqlDb = new SQL.Database();
+  }
+
+  sqlDb.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       email TEXT UNIQUE NOT NULL,
@@ -60,6 +115,7 @@ function initDB() {
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
   `);
+  saveDb();
 }
 
 module.exports = { db, initDB };
