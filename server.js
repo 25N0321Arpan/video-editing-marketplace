@@ -31,7 +31,6 @@ app.use(authenticate);
 app.use('/', require('./routes/auth'));
 app.use('/jobs', require('./routes/jobs'));
 app.use('/dashboard', require('./routes/dashboard'));
-app.use('/wallet', require('./routes/dashboard'));
 app.use('/admin', require('./routes/admin'));
 app.use('/submissions', require('./routes/submissions'));
 app.use('/profile', require('./routes/profile'));
