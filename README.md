@@ -90,3 +90,29 @@ The app will be running at `http://localhost:3000`
 - Editors earn **90%** of the job budget
 - Payments are instant upon acceptance
 
+## Deployment
+
+### Deploy to Render (Free Hosting)
+
+1. Fork or push this repository to GitHub.
+2. Go to [render.com](https://render.com) and create a new **Web Service**.
+3. Connect your GitHub repository.
+4. Render will auto-detect settings from `render.yaml`.
+5. Click **Deploy**.
+
+The `render.yaml` blueprint configures:
+- Build command: `npm install && npm run seed`
+- Start command: `npm start`
+- A persistent disk mounted at `/opt/render/project/src/data` for the SQLite database and uploads
+
+#### Environment Variables
+
+| Variable            | Description                              | Default        |
+|---------------------|------------------------------------------|----------------|
+| `NODE_ENV`          | Set to `production` on Render            | `development`  |
+| `JWT_SECRET`        | Secret for JWT signing (auto-generated)  | —              |
+| `PORT`              | Port the server listens on               | `3000`         |
+| `PLATFORM_COMMISSION` | Commission rate (e.g. `0.10` = 10%)   | `0.10`         |
+
+After deployment your app will be accessible at the URL shown in the Render dashboard.
+

@@ -2,11 +2,16 @@ require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const helmet = require('helmet');
+const compression = require('compression');
 const { initDB } = require('./config/database');
 const { authenticate } = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Trust Render's reverse proxy
+app.set('trust proxy', 1);
 
 // Initialize database
 initDB();
@@ -14,6 +19,10 @@ initDB();
 // View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Security and performance middleware
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(compression());
 
 // Middleware
 app.use(express.json());
@@ -91,8 +100,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`VideoMarket server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 module.exports = app;
